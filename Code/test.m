@@ -1,9 +1,9 @@
-% This is a demo code for our denoising algorithm
-clear; close all
+% This is a demo code for our OCT denoising algorithm:
 
 %==========================================================================
 % Read Data
 %==========================================================================
+clear; close all
 %%% choose which example sample to use
 % load('../Data/phantom_noisy.mat');
 % load('../Data/orange_noisy.mat');
@@ -16,15 +16,20 @@ map = map(1:999,:);
 map = [map;[1,1,1]];
 M = prctile(D_input(:),99);
 
-figure; imshow(D_input,[0 M],'Colormap',map); colorbar;
-title('Noisy');
+%==========================================================================
+% Statistical parameter estimation
+%==========================================================================
+
+alpha = estimatePar(D_input);
 
 %==========================================================================
 % Run Proposed Method
 %==========================================================================
-
-% distribution coefficient estimation
-alpha = 0.525;
+if ~exist('alpha','var')
+    % default value
+    alpha = 0.525;
+end
+% compute distribution coefficient
 c1 = (1-alpha^2/2)^(1/4);
 c2 = 1-(1-alpha^2/2)^(1/2);
 
@@ -41,7 +46,11 @@ tic;
 [ U_ours_huberTV ] = ladexp_huberTV( D_input, par );
 toc;
 
-figure;clf; imshow(U_ours_huberTV,[0 M],'Colormap',map); colorbar;
+%==========================================================================
+% Display images
+%==========================================================================
+figure; imshow(D_input,[0 M],'Colormap',map); colorbar;
+title('Noisy');
+figure; imshow(U_ours_huberTV,[0 M],'Colormap',map); colorbar;
 title('Denoised');
-
 
