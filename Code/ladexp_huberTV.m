@@ -78,19 +78,17 @@ for iter = 1:maxIter
     
     %%% update y
     thresh_huber = 0.02; % based on the range of image values
-    range = max(max(K1(x)))-min(min(K1(x)));
-    pd = (K1(x) - pold/gamma)/range;
+    K1x = K1(x);
+    range = max(max(K1x))-min(min(K1x));
+    pd = (K1x - pold/gamma)/range;
     pdnorm = sqrt( pd(:,1:n).^2 + pd(:,n+1:2*n).^2 );
-%     AA = zeros(size(pdnorm));
-%     AA(pdnorm-lambda/alpha > pdnorm/(1+lambda/(alpha*thresh_huber))) = 1;
-%     figure; imshow(AA);
     y = range* repmat(max(pdnorm-lambda/gamma, pdnorm/(1+lambda/(gamma*thresh_huber))),1,2).*(pd./repmat(max(pdnorm,1e-5),1,2));
 %     v = K1(x)-pold/alpha;
 %     vnorm = sqrt( v(:,1:n).^2 + v(:,n+1:2*n).^2 );
 %     y = repmat(max(vnorm - lambda/alpha, 0)./max(vnorm,1e-6), 1,2) .* v;
     
     %%% update p
-    p = pold + gamma*(y - K1(x));
+    p = pold + gamma*(y - K1x);
     
     
     %%% correction step
@@ -108,7 +106,7 @@ for iter = 1:maxIter
     p = p-beta*dp;
     
     %%% stopping
-    if sum(reshape((x-xold).^2,[],1))/sqrt(numel(x)) <0.0005
+    if sum(sum((x-xold).^2))/sqrt(numel(x)) <0.0005
        break
     else
         yold = y;
@@ -123,6 +121,7 @@ x = exp(x);
 
 end
 
+
 % compute gradients
 function [x] = K1(u)
     x = [u(:,[2:end end])-u, u([2:end end],:,:)-u];
@@ -132,4 +131,40 @@ end
 function [u] = K1_T(x)
     n = size(x,2)/2;
     u = ( -x(:,1:n) + x(:,[1 1:n-1]) ) + ( -x(:,(n+1):2*n) + x([1 1:end-1],(n+1):2*n) );
+end
+
+function newpar = mergeParam(varargin)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NEWPARAM = MERGEPARAM(PARAM1,PARAM2,...)
+% MERGEPARAM merges parameter sets PARAM1, PARAM2,... into NEWPARAM.
+% Each parameter set as well as the new one is a struct with field names. 
+% If a field is defined multiple times, the last input argument is 
+% taken into account.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+newpar = varargin{1};
+if ~isstruct(newpar)
+    error('mergeParam:1st parameter set is not a structure');
+end
+
+for i = 2:length(varargin)
+    temp = varargin{i};
+    if ~isempty(temp)
+        if ~isstruct(temp)
+            switch i
+                case 2
+                    error('mergeParam:2nd parameter set is not a structure');
+                case 3
+                    error('mergeParam:3rd parameter set is not a structure');
+                otherwise
+                    error(['mergeParam:' num2str(i) '-th parameter set is not a structure']);
+            end
+        end
+        for f = fieldnames(temp)'
+            %newparam = setfield(newparam,f{1},getfield(temp,f{1}));
+            newpar.(f{1}) = temp.(f{1});
+        end
+    end
+end
 end
