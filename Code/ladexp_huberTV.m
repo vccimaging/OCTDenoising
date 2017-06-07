@@ -1,5 +1,5 @@
 function [ x ] = ladexp_huberTV( z, par )
-%PROXIMAL Takes a noisy OCT image outputs an estimate for the latent image
+%LADEXP_HUBERTV Takes a noisy OCT image outputs an estimate for the latent image
 %
 %   Inputs:
 %
