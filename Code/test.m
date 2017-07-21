@@ -5,16 +5,20 @@
 %==========================================================================
 clear; close all
 %%% choose which example sample to use
-% load('../Data/phantom_noisy.mat');
-% load('../Data/orange_noisy.mat');
-% load('../Data/chickenskin_noisy.mat');
-load('../Data/biofilm_noisy.mat');
+% imgPath = '../Data/phantom_noisy.tif';
+% imgPath = '../Data/orange_noisy.tif';
+% imgPath = '../Data/chickenskin_noisy.tif';
+imgPath = '../Data/biofilm_noisy.tif';
+
+
+%%% the input image intensity should be within [0, 1]
+D_input = imread(imgPath);
+D_input = im2double(D_input);
 
 % create a colormap
 map = parula(1000); 
 map = map(1:999,:);
 map = [map;[1,1,1]];
-M = prctile(D_input(:),99);
 
 %==========================================================================
 % Statistical parameter estimation
@@ -49,8 +53,8 @@ toc;
 %==========================================================================
 % Display images
 %==========================================================================
-figure; imshow(D_input,[0 M],'Colormap',map); colorbar;
+figure; imshow(D_input,[],'Colormap',map); colorbar;
 title('Noisy');
-figure; imshow(U_ours_huberTV,[0 M],'Colormap',map); colorbar;
+figure; imshow(U_ours_huberTV,[],'Colormap',map); colorbar;
 title('Denoised');
 

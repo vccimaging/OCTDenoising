@@ -3,7 +3,7 @@ function [ x ] = ladexp_huberTV( z, par )
 %
 %   Inputs:
 %
-%       z: noisy OCT image (a single B-scan)
+%       z: noisy OCT image (a single B-scan), the range of z should be [0, 1]
 %
 %       par:
 %       par.gamma: weight on the Lagrangian multiplier (default: 2)
