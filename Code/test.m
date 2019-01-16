@@ -5,10 +5,10 @@
 %==========================================================================
 clear; close all
 %%% choose which example sample to use
-% imgPath = '../Data/phantom_noisy.tif';
-% imgPath = '../Data/orange_noisy.tif';
-% imgPath = '../Data/chickenskin_noisy.tif';
-imgPath = '../Data/biofilm_noisy.tif';
+% imgPath = '../Data/phantom_0001_noisy.tif';
+% imgPath = '../Data/orange_0018_noisy.tif';
+% imgPath = '../Data/chickenskin_0003_noisy.tif';
+imgPath = '../Data/biomass_0004_noisy.tif';
 
 
 %%% the input image intensity should be within [0, 1]
@@ -40,11 +40,10 @@ c2 = 1-(1-alpha^2/2)^(1/2);
 % parameter selection
 par.lambda = 0.4;
 par.gamma = 2;
-par.delta = 0.002;
 par.theta = 0.98;
 par.c1 = c1;
 par.c2 = c2;
-par.maxIter = 20;
+par.maxIter = 30;
 
 tic;
 [ U_ours_huberTV ] = ladexp_huberTV( D_input, par );

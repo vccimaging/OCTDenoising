@@ -8,7 +8,7 @@ function [ x ] = ladexp_huberTV( z, par )
 %       par:
 %       par.gamma: weight on the Lagrangian multiplier (default: 2)
 %       par.lambda: weight on huber TV regularization (default: 0.5)
-%       par.delta: a small constant for linearization (default: 0.002)
+%       par.delta: a small constant for linearization (default: 0.001)
 %       par.theta: correction parameter (default: 0.98)
 %       par.c1: distribution mean coefficient (default: 0.959)
 %       par.c2: distribution variance coefficient (default: 0.0804)
@@ -26,7 +26,7 @@ function [ x ] = ladexp_huberTV( z, par )
 % default parameters
 par0.lambda = 0.5;
 par0.gamma = 2;
-par0.delta = 0.002;
+par0.delta = 0.001;
 par0.theta = 0.98;
 par0.c1 = 0.959;
 par0.c2 = 0.0804;
@@ -58,6 +58,7 @@ end
 %   Initialization
 %-------------------------------------------------------------
 z(isnan(z)) = 1e-4;
+z(z<1e-4) = 1e-4;
 xold = log(z);
 xbar = xold;
 [m,n] = size(xbar);
